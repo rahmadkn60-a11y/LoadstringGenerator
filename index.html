@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Lua Uploader</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, #1c2433 0%, #0b0f16 45%, #07090d 100%);
+      color: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .header {
+      margin-bottom: 22px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 11px;
+      border: 1px solid #303948;
+      border-radius: 999px;
+      color: #9da9bb;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: #8d98a8;
+      font-size: 14px;
+    }
+
+    .panel {
+      background: rgba(15, 20, 29, 0.88);
+      border: 1px solid #27303d;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(12px);
+    }
+
+    .label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      color: #cbd3df;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 390px;
+      resize: vertical;
+      padding: 16px;
+      border-radius: 13px;
+      border: 1px solid #303948;
+      outline: none;
+      background: #090d13;
+      color: #dce4ef;
+      font-family: "JetBrains Mono", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    textarea:focus {
+      border-color: #65748a;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 11px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .convert {
+      background: #f1f4f8;
+      color: #080b10;
+      flex: 1;
+    }
+
+    .clear {
+      background: #1a202b;
+      color: #bfc8d5;
+      border: 1px solid #303948;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.9;
+    }
+
+    .result {
+      margin-top: 18px;
+      display: none;
+    }
+
+    .result textarea {
+      min-height: 120px;
+    }
+
+    .copy {
+      width: 100%;
+      margin-top: 10px;
+      background: #1a202b;
+      color: #e4eaf2;
+      border: 1px solid #303948;
+    }
+
+    .status {
+      margin-top: 12px;
+      min-height: 20px;
+      color: #8995a6;
+      font-size: 12px;
+    }
+
+    @media (max-width: 650px) {
+      body {
+        padding: 14px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <header class="header">
+      <span class="badge">LUA / LUAU TOOL</span>
+      <h1>Auto Uploader</h1>
+      <p class="subtitle">
+        Convert dan kelola source code dari satu interface.
+      </p>
+    </header>
+
+    <section class="panel">
+
+      <div class="label">
+        <span>Lua / Luau Source</span>
+        <span id="counter">0 chars</span>
+      </div>
+
+      <textarea
+        id="source"
+        placeholder="Paste kode Lua / Luau di sini..."
+        spellcheck="false"
+      ></textarea>
+
+      <div class="actions">
+        <button class="convert" id="convertBtn">
+          Convert
+        </button>
+
+        <button class="clear" id="clearBtn">
+          Clear
+        </button>
+      </div>
+
+      <div class="result" id="resultBox">
+
+        <div class="label">
+          <span>Generated Output</span>
+        </div>
+
+        <textarea
+          id="output"
+          readonly
+          spellcheck="false"
+        ></textarea>
+
+        <button class="copy" id="copyBtn">
+          Copy
+        </button>
+
+      </div>
+
+      <div class="status" id="status"></div>
+
+    </section>
+
+  </main>
+
+  <script>
+    const source = document.getElementById("source");
+    const output = document.getElementById("output");
+    const resultBox = document.getElementById("resultBox");
+    const counter = document.getElementById("counter");
+    const status = document.getElementById("status");
+
+    const convertBtn = document.getElementById("convertBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const copyBtn = document.getElementById("copyBtn");
+
+    source.addEventListener("input", () => {
+      counter.textContent = `${source.value.length} chars`;
+    });
+
+    convertBtn.addEventListener("click", () => {
+      const code = source.value.trim();
+
+      if (!code) {
+        status.textContent = "Source masih kosong.";
+        resultBox.style.display = "none";
+        return;
+      }
+
+      /*
+       * Placeholder untuk pipeline conversion.
+       * Integrasi GitHub/API dilakukan pada tahap berikutnya.
+       */
+      output.value = code;
+
+      resultBox.style.display = "block";
+      status.textContent = "Source berhasil diproses.";
+    });
+
+    clearBtn.addEventListener("click", () => {
+      source.value = "";
+      output.value = "";
+      counter.textContent = "0 chars";
+      resultBox.style.display = "none";
+      status.textContent = "";
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      if (!output.value) return;
+
+      await navigator.clipboard.writeText(output.value);
+
+      status.textContent = "Output disalin ke clipboard.";
+    });
+  </script>
+
+</body>
+</html>
