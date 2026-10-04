@@ -1,0 +1,33 @@
+export async function onRequestPost({ request, env }) {
+  try {
+    const body = await request.json();
+
+    const source = typeof body.source === "string"
+      ? body.source.trim()
+      : "";
+
+    if (!source) {
+      return Response.json(
+        { error: "Source kosong." },
+        { status: 400 }
+      );
+    }
+
+    /*
+     * GitHub integration akan dipasang pada tahap berikutnya.
+     * Token/API secret tidak pernah dikirim dari browser sebagai
+     * hard-coded credential.
+     */
+
+    return Response.json({
+      ok: true,
+      message: "Source diterima.",
+      length: source.length
+    });
+  } catch {
+    return Response.json(
+      { error: "Request tidak valid." },
+      { status: 400 }
+    );
+  }
+}
