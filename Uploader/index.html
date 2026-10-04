@@ -14,14 +14,26 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Inter, Arial, sans-serif;
-      background:
-        radial-gradient(circle at top, #1c2433 0%, #0b0f16 45%, #07090d 100%);
-      color: #f5f7fa;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       padding: 24px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-family:
+        Inter,
+        Arial,
+        sans-serif;
+
+      color: #f5f7fa;
+
+      background:
+        radial-gradient(
+          circle at top,
+          #1c2433 0%,
+          #0b0f16 45%,
+          #07090d 100%
+        );
     }
 
     .container {
@@ -35,75 +47,115 @@
 
     .badge {
       display: inline-block;
+
       padding: 6px 11px;
+
       border: 1px solid #303948;
       border-radius: 999px;
+
       color: #9da9bb;
+
       font-size: 12px;
       margin-bottom: 12px;
     }
 
     h1 {
       margin: 0;
+
       font-size: 34px;
       letter-spacing: -1px;
     }
 
     .subtitle {
       margin-top: 8px;
+
       color: #8d98a8;
+
       font-size: 14px;
     }
 
     .panel {
-      background: rgba(15, 20, 29, 0.88);
+      padding: 20px;
+
       border: 1px solid #27303d;
       border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+
+      background: rgba(15, 20, 29, 0.88);
+
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.35);
+
       backdrop-filter: blur(12px);
     }
 
     .label {
       display: flex;
       justify-content: space-between;
+
       margin-bottom: 10px;
+
       color: #cbd3df;
+
       font-size: 13px;
       font-weight: 600;
     }
 
-    textarea {
+    textarea,
+    input {
       width: 100%;
-      min-height: 390px;
-      resize: vertical;
-      padding: 16px;
-      border-radius: 13px;
+
       border: 1px solid #303948;
+      border-radius: 13px;
+
       outline: none;
+
       background: #090d13;
       color: #dce4ef;
-      font-family: "JetBrains Mono", Consolas, monospace;
+
+      font-family:
+        "JetBrains Mono",
+        Consolas,
+        monospace;
+
       font-size: 13px;
+    }
+
+    textarea {
+      min-height: 390px;
+
+      padding: 16px;
+
+      resize: vertical;
+
       line-height: 1.6;
     }
 
-    textarea:focus {
+    input {
+      padding: 13px;
+    }
+
+    textarea:focus,
+    input:focus {
       border-color: #65748a;
     }
 
     .actions {
       display: flex;
       gap: 10px;
+
       margin-top: 14px;
     }
 
     button {
+      padding: 12px 18px;
+
       border: 0;
       border-radius: 11px;
-      padding: 12px 18px;
+
       font-weight: 700;
+
       cursor: pointer;
+
       transition: 0.18s ease;
     }
 
@@ -119,39 +171,58 @@
     }
 
     .convert {
+      flex: 1;
+
       background: #f1f4f8;
       color: #080b10;
-      flex: 1;
     }
 
     .clear {
       background: #1a202b;
       color: #bfc8d5;
+
       border: 1px solid #303948;
     }
 
     .result {
-      margin-top: 18px;
       display: none;
+
+      margin-top: 18px;
     }
 
-    .result textarea {
-      min-height: 120px;
+    .result input {
+      min-height: 45px;
     }
 
     .copy {
       width: 100%;
+
       margin-top: 10px;
+
       background: #1a202b;
       color: #e4eaf2;
+
       border: 1px solid #303948;
     }
 
     .status {
-      margin-top: 12px;
       min-height: 20px;
+
+      margin-top: 12px;
+
       color: #8995a6;
+
       font-size: 12px;
+    }
+
+    .filename {
+      margin-top: 12px;
+
+      color: #737f90;
+
+      font-size: 12px;
+
+      word-break: break-all;
     }
 
     @media (max-width: 650px) {
@@ -179,21 +250,36 @@
   <main class="container">
 
     <header class="header">
-      <span class="badge">LUA / LUAU TOOL</span>
 
-      <h1>Auto Uploader</h1>
+      <span class="badge">
+        LUA / LUAU TOOL
+      </span>
+
+      <h1>
+        Auto Uploader
+      </h1>
 
       <p class="subtitle">
-        Convert dan kelola source code dari satu interface.
+        Upload source ke repository dan dapatkan Raw URL.
       </p>
+
     </header>
+
 
     <section class="panel">
 
       <div class="label">
-        <span>Lua / Luau Source</span>
-        <span id="counter">0 chars</span>
+
+        <span>
+          Lua / Luau Source
+        </span>
+
+        <span id="counter">
+          0 chars
+        </span>
+
       </div>
+
 
       <textarea
         id="source"
@@ -201,13 +287,14 @@
         spellcheck="false"
       ></textarea>
 
+
       <div class="actions">
 
         <button
           class="convert"
           id="convertBtn"
         >
-          Convert
+          Upload
         </button>
 
         <button
@@ -219,29 +306,43 @@
 
       </div>
 
+
       <div
         class="result"
         id="resultBox"
       >
 
         <div class="label">
-          <span>Generated Output</span>
+
+          <span>
+            Raw URL
+          </span>
+
         </div>
 
-        <textarea
-          id="output"
+
+        <input
+          id="rawUrl"
+          type="text"
           readonly
-          spellcheck="false"
-        ></textarea>
+        />
+
 
         <button
           class="copy"
           id="copyBtn"
         >
-          Copy
+          Copy Raw URL
         </button>
 
+
+        <div
+          class="filename"
+          id="filename"
+        ></div>
+
       </div>
+
 
       <div
         class="status"
@@ -252,142 +353,225 @@
 
   </main>
 
-  <script>
-    const source = document.getElementById("source");
-    const output = document.getElementById("output");
-    const resultBox = document.getElementById("resultBox");
-    const counter = document.getElementById("counter");
-    const status = document.getElementById("status");
 
-    const convertBtn = document.getElementById("convertBtn");
-    const clearBtn = document.getElementById("clearBtn");
-    const copyBtn = document.getElementById("copyBtn");
+  <script>
+
+    const source =
+      document.getElementById("source");
+
+    const rawUrl =
+      document.getElementById("rawUrl");
+
+    const filename =
+      document.getElementById("filename");
+
+    const resultBox =
+      document.getElementById("resultBox");
+
+    const counter =
+      document.getElementById("counter");
+
+    const status =
+      document.getElementById("status");
+
+    const convertBtn =
+      document.getElementById("convertBtn");
+
+    const clearBtn =
+      document.getElementById("clearBtn");
+
+    const copyBtn =
+      document.getElementById("copyBtn");
 
 
     /*
      * Character counter
      */
 
-    source.addEventListener("input", () => {
-      counter.textContent = `${source.value.length} chars`;
-    });
+    source.addEventListener(
+      "input",
+      () => {
+
+        counter.textContent =
+          `${source.value.length} chars`;
+
+      }
+    );
 
 
     /*
-     * Convert
+     * Upload
      */
 
-    convertBtn.addEventListener("click", async () => {
+    convertBtn.addEventListener(
+      "click",
+      async () => {
 
-      const code = source.value.trim();
+        const code =
+          source.value.trim();
 
-      if (!code) {
-        status.textContent = "Source masih kosong.";
-        resultBox.style.display = "none";
-        return;
-      }
 
-      convertBtn.disabled = true;
-      convertBtn.textContent = "Processing...";
+        if (!code) {
 
-      status.textContent =
-        "Mengirim source ke server...";
+          status.textContent =
+            "Source masih kosong.";
 
-      try {
+          resultBox.style.display =
+            "none";
 
-        const response = await fetch(
-          "/api/convert",
-          {
-            method: "POST",
+          return;
 
-            headers: {
-              "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-              source: code
-            })
-          }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            data.error || "Request gagal."
-          );
         }
 
-        output.value = code;
 
-        resultBox.style.display = "block";
+        convertBtn.disabled =
+          true;
 
-        status.textContent =
-          `Berhasil diproses (${data.length} karakter).`;
+        convertBtn.textContent =
+          "Uploading...";
 
-      } catch (error) {
-
-        resultBox.style.display = "none";
 
         status.textContent =
-          error.message ||
-          "Terjadi kesalahan.";
+          "Membuat nama file dan mengupload...";
 
-      } finally {
 
-        convertBtn.disabled = false;
-        convertBtn.textContent = "Convert";
+        resultBox.style.display =
+          "none";
+
+
+        try {
+
+          const response =
+            await fetch(
+              "/api/convert",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  source: code
+                })
+              }
+            );
+
+
+          const data =
+            await response.json();
+
+
+          if (!response.ok || !data.ok) {
+
+            throw new Error(
+              data.error ||
+              "Upload gagal."
+            );
+
+          }
+
+
+          rawUrl.value =
+            data.rawUrl || "";
+
+
+          filename.textContent =
+            data.filename
+              ? `File: ${data.filename}`
+              : "";
+
+
+          resultBox.style.display =
+            "block";
+
+
+          status.textContent =
+            "Upload berhasil.";
+
+        } catch (error) {
+
+          status.textContent =
+            error.message ||
+            "Terjadi kesalahan.";
+
+        } finally {
+
+          convertBtn.disabled =
+            false;
+
+          convertBtn.textContent =
+            "Upload";
+
+        }
 
       }
+    );
 
-    });
+
+    /*
+     * Copy Raw URL
+     */
+
+    copyBtn.addEventListener(
+      "click",
+      async () => {
+
+        if (!rawUrl.value) {
+          return;
+        }
+
+
+        try {
+
+          await navigator.clipboard.writeText(
+            rawUrl.value
+          );
+
+          status.textContent =
+            "Raw URL berhasil disalin.";
+
+        } catch {
+
+          rawUrl.select();
+
+          document.execCommand(
+            "copy"
+          );
+
+          status.textContent =
+            "Raw URL berhasil disalin.";
+
+        }
+
+      }
+    );
 
 
     /*
      * Clear
      */
 
-    clearBtn.addEventListener("click", () => {
+    clearBtn.addEventListener(
+      "click",
+      () => {
 
-      source.value = "";
-      output.value = "";
+        source.value = "";
+        rawUrl.value = "";
+        filename.textContent = "";
 
-      counter.textContent = "0 chars";
+        counter.textContent =
+          "0 chars";
 
-      resultBox.style.display = "none";
-
-      status.textContent = "";
-
-    });
-
-
-    /*
-     * Copy
-     */
-
-    copyBtn.addEventListener("click", async () => {
-
-      if (!output.value) {
-        return;
-      }
-
-      try {
-
-        await navigator.clipboard.writeText(
-          output.value
-        );
+        resultBox.style.display =
+          "none";
 
         status.textContent =
-          "Output disalin ke clipboard.";
-
-      } catch {
-
-        status.textContent =
-          "Clipboard tidak tersedia di browser.";
+          "";
 
       }
-
-    });
+    );
 
   </script>
 
