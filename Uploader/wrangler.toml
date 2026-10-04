@@ -1,4 +1,6 @@
-name = "all-script-vanz"
+name = "loadstringgenerator"
+
+main = "worker.js"
 
 compatibility_date = "2026-10-04"
 
