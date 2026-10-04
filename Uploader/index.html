@@ -107,6 +107,17 @@
       transition: 0.18s ease;
     }
 
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.9;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.55;
+      transform: none;
+    }
+
     .convert {
       background: #f1f4f8;
       color: #080b10;
@@ -117,11 +128,6 @@
       background: #1a202b;
       color: #bfc8d5;
       border: 1px solid #303948;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      opacity: 0.9;
     }
 
     .result {
@@ -174,7 +180,9 @@
 
     <header class="header">
       <span class="badge">LUA / LUAU TOOL</span>
+
       <h1>Auto Uploader</h1>
+
       <p class="subtitle">
         Convert dan kelola source code dari satu interface.
       </p>
@@ -194,16 +202,27 @@
       ></textarea>
 
       <div class="actions">
-        <button class="convert" id="convertBtn">
+
+        <button
+          class="convert"
+          id="convertBtn"
+        >
           Convert
         </button>
 
-        <button class="clear" id="clearBtn">
+        <button
+          class="clear"
+          id="clearBtn"
+        >
           Clear
         </button>
+
       </div>
 
-      <div class="result" id="resultBox">
+      <div
+        class="result"
+        id="resultBox"
+      >
 
         <div class="label">
           <span>Generated Output</span>
@@ -215,13 +234,19 @@
           spellcheck="false"
         ></textarea>
 
-        <button class="copy" id="copyBtn">
+        <button
+          class="copy"
+          id="copyBtn"
+        >
           Copy
         </button>
 
       </div>
 
-      <div class="status" id="status"></div>
+      <div
+        class="status"
+        id="status"
+      ></div>
 
     </section>
 
@@ -238,11 +263,22 @@
     const clearBtn = document.getElementById("clearBtn");
     const copyBtn = document.getElementById("copyBtn");
 
+
+    /*
+     * Character counter
+     */
+
     source.addEventListener("input", () => {
       counter.textContent = `${source.value.length} chars`;
     });
 
-    convertBtn.addEventListener("click", () => {
+
+    /*
+     * Convert
+     */
+
+    convertBtn.addEventListener("click", async () => {
+
       const code = source.value.trim();
 
       if (!code) {
@@ -251,31 +287,108 @@
         return;
       }
 
-      /*
-       * Placeholder untuk pipeline conversion.
-       * Integrasi GitHub/API dilakukan pada tahap berikutnya.
-       */
-      output.value = code;
+      convertBtn.disabled = true;
+      convertBtn.textContent = "Processing...";
 
-      resultBox.style.display = "block";
-      status.textContent = "Source berhasil diproses.";
+      status.textContent =
+        "Mengirim source ke server...";
+
+      try {
+
+        const response = await fetch(
+          "/api/convert",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              source: code
+            })
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.error || "Request gagal."
+          );
+        }
+
+        output.value = code;
+
+        resultBox.style.display = "block";
+
+        status.textContent =
+          `Berhasil diproses (${data.length} karakter).`;
+
+      } catch (error) {
+
+        resultBox.style.display = "none";
+
+        status.textContent =
+          error.message ||
+          "Terjadi kesalahan.";
+
+      } finally {
+
+        convertBtn.disabled = false;
+        convertBtn.textContent = "Convert";
+
+      }
+
     });
+
+
+    /*
+     * Clear
+     */
 
     clearBtn.addEventListener("click", () => {
+
       source.value = "";
       output.value = "";
+
       counter.textContent = "0 chars";
+
       resultBox.style.display = "none";
+
       status.textContent = "";
+
     });
+
+
+    /*
+     * Copy
+     */
 
     copyBtn.addEventListener("click", async () => {
-      if (!output.value) return;
 
-      await navigator.clipboard.writeText(output.value);
+      if (!output.value) {
+        return;
+      }
 
-      status.textContent = "Output disalin ke clipboard.";
+      try {
+
+        await navigator.clipboard.writeText(
+          output.value
+        );
+
+        status.textContent =
+          "Output disalin ke clipboard.";
+
+      } catch {
+
+        status.textContent =
+          "Clipboard tidak tersedia di browser.";
+
+      }
+
     });
+
   </script>
 
 </body>
