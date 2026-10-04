@@ -2,32 +2,119 @@ export async function onRequestPost({ request, env }) {
   try {
     const body = await request.json();
 
-    const source = typeof body.source === "string"
-      ? body.source.trim()
-      : "";
+    const source =
+      typeof body.source === "string"
+        ? body.source
+        : "";
 
-    if (!source) {
+    if (!source.trim()) {
       return Response.json(
-        { error: "Source kosong." },
-        { status: 400 }
+        {
+          ok: false,
+          error: "Source kosong."
+        },
+        {
+          status: 400
+        }
       );
     }
 
     /*
-     * GitHub integration akan dipasang pada tahap berikutnya.
-     * Token/API secret tidak pernah dikirim dari browser sebagai
-     * hard-coded credential.
+     * GitHub configuration disimpan sebagai
+     * Cloudflare environment variables.
+     *
+     * GITHUB_TOKEN
+     * GITHUB_OWNER
+     * GITHUB_REPO
+     * GITHUB_BRANCH
      */
+
+    const token = env.GITHUB_TOKEN;
+    const owner = env.GITHUB_OWNER;
+    const repo = env.GITHUB_REPO;
+    const branch = env.GITHUB_BRANCH || "main";
+
+    if (!token || !owner || !repo) {
+      return Response.json(
+        {
+          ok: false,
+          error: "GitHub belum dikonfigurasi."
+        },
+        {
+          status: 500
+        }
+      );
+    }
+
+    const filename =
+      `uploads/${Date.now()}-${crypto.randomUUID()}.lua`;
+
+    const encodedSource = btoa(
+      unescape(
+        encodeURIComponent(source)
+      )
+    );
+
+    const githubUrl =
+      `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${filename}`;
+
+    const githubResponse = await fetch(
+      githubUrl,
+      {
+        method: "PUT",
+
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          message: `Upload source ${filename}`,
+          content: encodedSource,
+          branch
+        })
+      }
+    );
+
+    const githubData =
+      await githubResponse.json();
+
+    if (!githubResponse.ok) {
+      return Response.json(
+        {
+          ok: false,
+          error:
+            githubData.message ||
+            "Upload GitHub gagal."
+        },
+        {
+          status: githubResponse.status
+        }
+      );
+    }
+
+    const rawUrl =
+      `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filename}`;
 
     return Response.json({
       ok: true,
-      message: "Source diterima.",
-      length: source.length
+      filename,
+      rawUrl
     });
-  } catch {
+
+  } catch (error) {
+
     return Response.json(
-      { error: "Request tidak valid." },
-      { status: 400 }
+      {
+        ok: false,
+        error: error.message || "Server error."
+      },
+      {
+        status: 500
+      }
     );
+
   }
 }
